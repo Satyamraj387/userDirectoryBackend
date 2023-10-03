@@ -1,14 +1,17 @@
 const express = require("express");
 
+const { signup } = require("../controllers/signupController");
+const { login } = require("../controllers/loginController");
+const { editUser } = require("../controllers/editController");
+const { verifyToken} = require("../middlewares/authJwt");
+
 const router = express.Router();
 
 router.get("/", (req, res) => {
   res.send("hello");
 });
-// router.use("/admin", require("./admin"));
-
-// router.use("/user", require("./user"));
-// router.use("/items", require("./item"));
-// router.use("/orders", require("./order"));
+router.post("/login", login);
+router.post("/signup", signup);
+router.post("/edit", [verifyToken], editUser);
 
 module.exports = router;
