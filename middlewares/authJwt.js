@@ -18,7 +18,7 @@ module.exports.verifyToken = (req, res, next) => {
       });
     }
     console.log(decoded); //gives the id iat and exp
-    req.body._id = decoded._id;
+    req.body._id = decoded.id;
 
     next();
   });

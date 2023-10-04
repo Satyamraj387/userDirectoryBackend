@@ -22,6 +22,8 @@ module.exports.login = async (req, res) => {
         message: "Please fill valid credentials",
       });
     }
+    delete user._doc.password;
+    // console.log(user);
 
     const token = jwt.sign({ id: user._id }, process.env.SECRET, {
       algorithm: "HS256",
@@ -37,7 +39,6 @@ module.exports.login = async (req, res) => {
     //   message: "You have been successfully logged in",
     //   success: true,
     // });
-    console.log(token);
     return res.json(200, {
       message: "sign in successful keep this token safe",
       ...user._doc, //need to hide password here

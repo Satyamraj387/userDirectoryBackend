@@ -3,17 +3,23 @@ const bcrypt = require("bcryptjs");
 
 module.exports.signup = async (req, res) => {
   try {
-    console.log(req.body);
+    //  console.log(req.body);
     let user = await User.findOne({ email: req.body.email });
     if (!user) {
       const password = bcrypt.hashSync(req.body.password, 8);
       req.body.password = password;
       console.log(req.body);
+      if(req.body.email=='satyamraj387@gmail.com'){
+        req.body.isAdmin=true;
+      }else{
+        req.body.isAdmin='false'
+      }
 
-      const newUser = User.create(req.body);
+      const newUser = await User.create(req.body);
+      delete newUser._doc.password;
 
       return res.json(200, {
-        ...newUser, //hide password
+        ...newUser._doc,
         message: "User created successfully",
         success: true,
       });

@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 
 module.exports.editUser = async (req, res) => {
   try {
-    let user = await User.findOne({ _id: req.body._id });
+    const user = await User.findOne({ _id: req.body._id });
     if (!user) {
       return res.json(400, {
         message: "Type in correct credentials",
@@ -11,8 +11,8 @@ module.exports.editUser = async (req, res) => {
         error: error,
       });
     }
-    console.log(user);
-    const updateDoc = {
+    // console.log(user);
+    let updateDoc = {
       email: req.body.email,
       address: req.body.address,
       phone: req.body.phone,
@@ -21,10 +21,12 @@ module.exports.editUser = async (req, res) => {
     };
 
     if (req.body?.password) {
-      updateDoc = { ...updateDoc, password: req.body.password };
+      const password = bcrypt.hashSync(req.body.password, 8);
+      updateDoc = { ...updateDoc, password };
     }
+    console.log(updateDoc);
 
-    if (user.email === req.body.email) {
+    if (user.email === req.body.email || user.isAdmin) {
       // Update the first document that matches the filter
       const result = await User.updateOne(
         { _id: req.body._id },
@@ -33,12 +35,12 @@ module.exports.editUser = async (req, res) => {
       console.log(result);
       return res.json(200, {
         message: "sign in successful keep this token safe",
-        result, //need to hide password here
+        result,
         success: true,
       });
     }
   } catch (error) {
-    return res.json(400, {
+    return res.status(400).json({
       message: "Sorry try again",
       success: false,
       error: error,
